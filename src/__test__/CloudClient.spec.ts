@@ -132,11 +132,15 @@ describe("家庭签到任务", async () => {
     nock("https://cloud.189.cn")
       .get("/api/portal/v2/getUserBriefInfo.action")
       .query(true)
-      .reply(200, { sessionKey: "1234" })
+    .intercept((req, res) => {
+      console.log("拦截到 getUserBriefInfo 请求：", req);
+      return res.reply(200, { sessionKey: "1234" });
+      });
       .get("/api/open/oauth2/getAccessTokenBySsKey.action")
       .query(true)
-      .reply(200, {
-        accessToken: "accessToken",
+      .intercept((req, res) => {     
+      console.log("拦截到 getAccessToken 请求：", req);
+      return res.reply(200, { accessToken: "accessTokenValue" });
       });
   });
   it("获取家庭列表", async () => {
